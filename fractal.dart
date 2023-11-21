@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 /// Your code should go into the DrawFractal class.
@@ -16,15 +18,55 @@ class DrawFractal extends CustomPainter {
 
   // Recursively draw the fractal
   void fractal(Canvas canvas, int level) {
-    canvas.drawCircle(const Offset(12.2,12.2), level + 0.1, Paint());
+    if (level == 0)
+      {
+        return;
+      }
+
+    // Current implementation is relative to the level at which the tree is at, so it will look like it is growing
+    // when going through the iterations.
+    canvas.drawLine( Offset.zero, Offset(0,-10.0 * level), Paint());
+
+
+    // Draw left side of tree
+    canvas.save();
+    canvas.translate(0,-10.0 * level);
+    canvas.scale(level / 10, level / 10);
+    canvas.rotate(-pi / 18);
+    // canvas.rotate(level * 15);
+
+    fractal(canvas, level - 1);
+
+    canvas.restore();
+
+    // Draw right side of tree
+    canvas.save();
+    canvas.translate(0,-10.0 * level);
+    canvas.scale(level / 10, level / 10);
+
+    canvas.rotate(pi/18);
+
+    fractal(canvas, level - 1);
+    canvas.restore();
+
+    // Draw middle of tree
+    canvas.save();
+    canvas.translate(0,-10.0 * level);
+    canvas.scale(level / 10, level / 10);
+    fractal(canvas, level - 1);
+    canvas.restore();
+
+
+
+    //canvas.drawCircle(const Offset(12.2,12.2), level + 0.1, Paint());
   }
 
   /// Called when the canvas is (re)painted, perform the initial moving of the
   /// fractal to the center and other actions here such as the initial call to fractal.
   @override
   void paint(Canvas canvas, Size size) {
+    canvas.translate((size.width / 2), (size.height / 2) + 100);
     fractal(canvas, level);
-    level += 10;
 
   }
 
